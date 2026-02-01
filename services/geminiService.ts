@@ -10,6 +10,9 @@ export const processImage = async (
   // Create a new instance right before the call to ensure it always uses the most up-to-date API key.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
+  // Check if prompt asks for 4K specifically to adjust imageSize config
+  const is4KRequest = prompt.toLowerCase().includes("4k") || prompt.toLowerCase().includes("ultra high");
+
   try {
     const response = await ai.models.generateContent({
       model: mode,
@@ -28,8 +31,8 @@ export const processImage = async (
       },
       config: mode === EditingMode.PROFESSIONAL ? {
         imageConfig: {
-          aspectRatio: "3:4", // Closest standard ratio to 23.5 x 29.5 cm print size
-          imageSize: "1K"     // Optimized for high quality detail
+          aspectRatio: "3:4", // Closest standard ratio (0.75) to user's 23.5x29.5cm (0.79)
+          imageSize: is4KRequest ? "4K" : "1K"
         }
       } : undefined
     });
