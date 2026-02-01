@@ -1,0 +1,38 @@
+name: NodeJS with Webpack
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Build
+      run: |
+        npm install
+        npx webpack
+            - الاسم: التفاعل الأول
+  يستخدم: actions/first-interaction@v1.3.0
+  مع:
+    # رمز مميز للمستودع. يمكن تمريره باستخدام {{ secrets.GITHUB_TOKEN }}
+    رمز الريبو:
+    تعليق للنشر على أول مشكلة لشخص ما
+    رسالة المشكلة: # اختياري
+    تعليق للنشر على أول طلب سحب لشخص ما
+    رسالة العميل: # اختياري
+          
