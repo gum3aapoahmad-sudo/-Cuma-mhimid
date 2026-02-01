@@ -1,0 +1,70 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow will install Deno then run `deno lint` and `deno test`.
+# For more information see: https://github.com/denoland/setup-deno
+
+name: Deno
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        # uses: denoland/setup-deno@v1
+        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31  # v1.1.2
+        with:
+          deno-version: v1.x
+
+      # Uncomment this step to verify the use of 'deno fmt' on each commit.
+      # - name: Verify formatting
+      #   run: deno fmt --check
+
+      - name: Run linter
+        run: deno lint
+
+      - name: Run tests
+        run: deno test -A
+            - الاسم: تحميل عنصر بناء
+  يستخدم: actions/upload-artifact@v6.0.0
+  مع:
+    # اسم القطعة الأثرية
+    الاسم: # اختياري، الافتراضي هو قطعة أثرية
+    # ملف أو مجلد أو نمط عام يصف ما سيتم تحميله
+    طريق:
+    # السلوك المطلوب في حالة عدم العثور على أي ملفات باستخدام المسار المقدم.
+الخيارات المتاحة:
+  تحذير: إخراج تحذير دون إيقاف الإجراء
+  خطأ: إيقاف الإجراء مع رسالة خطأ
+  تجاهل: لا تُصدر أي تحذيرات أو أخطاء، فالإجراء لا يفشل.
+
+    if-no-files-found: # اختياري، القيمة الافتراضية هي warn
+    # المدة التي تنتهي بعدها صلاحية الملف بالأيام. 0 تعني استخدام مدة الاحتفاظ الافتراضية.
+الحد الأدنى يوم واحد. الحد الأقصى 90 يومًا ما لم يتم تغييره من صفحة إعدادات المستودع.
+
+    أيام الاحتفاظ: # اختياري
+    # مستوى الضغط الذي سيطبقه Zlib على أرشيف الملفات. تتراوح القيمة من 0 إلى 9: - 0: بدون ضغط - 1: أفضل سرعة - 6: الضغط الافتراضي (مماثل لـ GNU Gzip) - 9: أفضل ضغط. تؤدي المستويات الأعلى إلى ضغط أفضل، ولكنها تستغرق وقتًا أطول. بالنسبة للملفات الكبيرة التي يصعب ضغطها، يُنصح باستخدام القيمة 0 لتحميل أسرع بكثير.
+
+    مستوى الضغط: # اختياري، القيمة الافتراضية هي 6
+    # إذا كانت القيمة صحيحة، فسيتم حذف العنصر الذي يحمل نفس الاسم قبل تحميل عنصر جديد. أما إذا كانت القيمة خاطئة، فسيفشل الإجراء إذا كان هناك عنصر موجود بالفعل بنفس الاسم. ولن يفشل الإجراء إذا لم يكن العنصر موجودًا.
+
+    الكتابة فوق: # اختياري، القيمة الافتراضية هي خطأ
+    # إذا كانت القيمة صحيحة، فسيتم تضمين الملفات المخفية في الملف الناتج. إذا كانت القيمة خاطئة، فسيتم استبعاد الملفات المخفية من الملف الناتج.
+
+    تضمين الملفات المخفية: # اختياري، القيمة الافتراضية هي خطأ
+          
