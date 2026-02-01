@@ -18,6 +18,7 @@ const App: React.FC = () => {
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [userName, setUserName] = useState('');
   const [hasApiKey, setHasApiKey] = useState(false);
   const [sharePreview, setSharePreview] = useState<string | null>(null);
@@ -238,26 +239,26 @@ const App: React.FC = () => {
           <div className="w-12 h-12 gold-gradient rounded-2xl flex items-center justify-center text-slate-950 font-bold text-3xl luxury-font shadow-lg shadow-amber-500/20">
             N
           </div>
-          <div>
+          <div className="hidden sm:block">
             <h1 className="text-2xl font-bold tracking-tighter luxury-font">نانو بنانو</h1>
             <div className="flex items-center gap-2">
                <span className="text-[10px] text-amber-500 uppercase tracking-widest font-bold">NANO BANANO EDITOR</span>
-               <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[9px] rounded-full border border-emerald-500/20 font-bold">موقع تعديل الصور بالذكاء الاصطناعي المجاني</span>
+               <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-[9px] rounded-full border border-emerald-500/20 font-bold">محرر صور بالذكاء الاصطناعي</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 lg:gap-6">
-          <nav className="hidden lg:flex items-center gap-1 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
+        <div className="flex items-center gap-4">
+          <nav className="flex items-center gap-1 bg-slate-900/80 p-1 rounded-2xl border border-slate-800">
             <button
               onClick={() => setMode(EditingMode.STANDARD)}
-              className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${mode === EditingMode.STANDARD ? 'bg-slate-800 text-white shadow-inner' : 'text-slate-500 hover:text-slate-300'}`}
+              className={`px-4 py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all ${mode === EditingMode.STANDARD ? 'bg-slate-800 text-white' : 'text-slate-500 hover:text-slate-300'}`}
             >
               الوضع السريع
             </button>
             <button
               onClick={() => setMode(EditingMode.PROFESSIONAL)}
-              className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${mode === EditingMode.PROFESSIONAL ? 'gold-gradient text-slate-950' : 'text-slate-500 hover:text-slate-300'}`}
+              className={`px-4 py-1.5 rounded-xl text-[10px] sm:text-xs font-bold transition-all ${mode === EditingMode.PROFESSIONAL ? 'gold-gradient text-slate-950' : 'text-slate-500 hover:text-slate-300'}`}
             >
               الوضع الاحترافي
             </button>
@@ -266,39 +267,45 @@ const App: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowSettingsModal(true)}
-              className={`p-2.5 rounded-full transition-all active:scale-95 border ${hasApiKey ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' : 'bg-slate-800 text-slate-300 border-slate-700'}`}
-              title="إعدادات المفتاح"
+              className={`p-2 rounded-full transition-all active:scale-95 border ${hasApiKey ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' : 'bg-slate-800 text-slate-300 border-slate-700'}`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
               </svg>
             </button>
             <button
-              onClick={startCamera}
-              className="p-2.5 bg-slate-800 text-slate-300 rounded-full hover:bg-slate-700 transition-all active:scale-95 border border-slate-700"
-              title="التقاط صورة"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
-              </svg>
-            </button>
-            <button
               onClick={() => fileInputRef.current?.click()}
-              className="px-6 py-2.5 bg-white text-slate-950 rounded-full font-bold hover:bg-slate-200 transition-all active:scale-95 flex items-center gap-2 shadow-xl shadow-white/5"
+              className="px-4 py-2 bg-white text-slate-950 rounded-full font-bold hover:bg-slate-200 transition-all active:scale-95 flex items-center gap-2 text-xs"
             >
-              <span className="hidden sm:inline">رفع صورة</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
-              </svg>
+              <span>رفع صورة</span>
             </button>
           </div>
           <input type="file" id="mainFileInput" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-slate-950">
-        <aside className="w-full lg:w-[380px] glass-panel lg:border-l border-slate-800 p-8 flex flex-col gap-8 overflow-y-auto z-40">
-          <div className="space-y-6">
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        {/* Toggle Button for Sidebar */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className={`absolute z-[45] hidden lg:flex top-1/2 -translate-y-1/2 transition-all duration-500 items-center justify-center w-10 h-24 bg-slate-900 border border-slate-800 hover:border-amber-500/50 rounded-r-3xl text-amber-500 shadow-2xl ${isSidebarOpen ? 'left-[380px]' : 'left-0'}`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`h-6 w-6 transition-transform duration-500 ${isSidebarOpen ? 'rotate-0' : 'rotate-180'}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+
+        {/* Sidebar */}
+        <aside 
+          className={`glass-panel lg:border-l border-slate-800 p-8 flex flex-col gap-8 overflow-y-auto z-40 transition-all duration-500 ease-in-out ${isSidebarOpen ? 'w-full lg:w-[380px] opacity-100' : 'w-0 lg:w-0 opacity-0 overflow-hidden !p-0'}`}
+        >
+          <div className="space-y-6 min-w-[320px]">
             <div>
               <label className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 block">أنماط "نانو بنانو" الفاخرة</label>
               <div className="grid grid-cols-1 gap-3">
@@ -311,26 +318,18 @@ const App: React.FC = () => {
                     }}
                     className={`group relative flex items-center gap-4 p-5 rounded-3xl border transition-all duration-300 text-right ${
                       selectedPresetId === preset.id && !customPrompt
-                        ? 'border-amber-500/50 bg-amber-500/5 shadow-2xl shadow-amber-500/10'
-                        : 'border-slate-800 bg-slate-900/30 hover:border-slate-700 hover:bg-slate-900/50'
+                        ? 'border-amber-500/50 bg-amber-500/5'
+                        : 'border-slate-800 bg-slate-900/30 hover:bg-slate-900/50'
                     }`}
                   >
-                    {/* Tooltip */}
-                    <div className="absolute left-[calc(100%+1rem)] top-1/2 -translate-y-1/2 w-56 p-4 bg-slate-900 border border-amber-500/30 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 pointer-events-none hidden lg:block">
-                      <div className="absolute right-full top-1/2 -translate-y-1/2 border-8 border-transparent border-r-slate-900" />
-                      <p className="text-xs text-slate-200 leading-relaxed font-medium">
-                        {preset.descriptionAr}
-                      </p>
-                    </div>
-
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl transition-all ${selectedPresetId === preset.id ? 'bg-amber-500 text-slate-950 scale-110' : 'bg-slate-800 text-slate-400 group-hover:scale-110'}`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all ${selectedPresetId === preset.id ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
                       {preset.icon}
                     </div>
                     <div className="flex-1">
-                      <p className={`font-bold text-sm ${selectedPresetId === preset.id ? 'text-amber-500' : 'text-slate-200'}`}>
+                      <p className={`font-bold text-xs ${selectedPresetId === preset.id ? 'text-amber-500' : 'text-slate-200'}`}>
                         {preset.nameAr}
                       </p>
-                      <p className="text-[9px] text-slate-500 luxury-font tracking-wider mt-0.5">{preset.name}</p>
+                      <p className="text-[9px] text-slate-500 mt-0.5">{preset.name}</p>
                     </div>
                   </button>
                 ))}
@@ -343,39 +342,42 @@ const App: React.FC = () => {
                 value={customPrompt}
                 onChange={(e) => setCustomPrompt(e.target.value)}
                 placeholder="صف تفاصيل التعديل التي تريدها من نانو بنانو..."
-                className="w-full h-32 bg-slate-900/80 border border-slate-800 rounded-3xl p-5 text-sm focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 outline-none transition-all placeholder:text-slate-600 resize-none"
+                className="w-full h-28 bg-slate-900/80 border border-slate-800 rounded-3xl p-4 text-sm focus:ring-1 focus:ring-amber-500/50 outline-none transition-all placeholder:text-slate-600 resize-none"
               />
             </div>
-          </div>
 
-          <div className="mt-auto space-y-4">
             <button
               onClick={checkAndRun}
               disabled={!imageState.original || imageState.isProcessing}
-              className="group w-full py-5 gold-gradient text-slate-950 font-bold rounded-3xl shadow-2xl shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3"
+              className="w-full py-4 gold-gradient text-slate-950 font-bold rounded-2xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2"
             >
               {imageState.isProcessing ? (
-                <>
-                  <svg className="animate-spin h-6 w-6" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  <span>جاري توليد السحر...</span>
-                </>
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
               ) : (
-                <>
-                  <span>توليد النتيجة الفاخرة</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </>
+                <span>توليد النتيجة الفاخرة</span>
               )}
             </button>
           </div>
         </aside>
 
-        <section className="flex-1 overflow-y-auto bg-black flex flex-col">
-          <div className="flex-1 min-h-[600px] flex items-center justify-center p-8 relative">
+        {/* Image Canvas Area */}
+        <section className="flex-1 overflow-y-auto bg-black flex flex-col transition-all duration-500">
+          <div className="flex-1 min-h-[500px] flex items-center justify-center p-4 sm:p-12 relative">
+            {!isSidebarOpen && (
+              <button 
+                onClick={() => setIsSidebarOpen(true)}
+                className="absolute top-8 right-8 z-[46] hidden lg:flex items-center gap-2 px-4 py-2 bg-slate-900 border border-amber-500/30 rounded-full text-[10px] font-bold text-amber-500 hover:bg-amber-500/10 transition-all"
+              >
+                <span>فتح الأدوات</span>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+
             {showCamera && (
               <div className="absolute inset-0 z-50 bg-black flex flex-col items-center justify-center p-4">
                 <div className="relative w-full max-w-2xl aspect-video rounded-3xl overflow-hidden border-2 border-amber-500 shadow-2xl">
@@ -397,57 +399,50 @@ const App: React.FC = () => {
 
             {!imageState.original ? (
               <div className="text-center space-y-8 max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                <div className="w-32 h-32 gold-gradient rounded-[40px] mx-auto flex items-center justify-center text-5xl shadow-2xl rotate-3 relative overflow-hidden group">
+                <div className="w-24 h-24 gold-gradient rounded-[32px] mx-auto flex items-center justify-center text-4xl shadow-2xl rotate-3">
                    📸
                 </div>
-                <h2 className="text-6xl font-bold luxury-font tracking-tight leading-tight">
-                   الجمال في <br/><span className="text-amber-500 italic">أبهى صوره مع نانو بنانو</span>
+                <h2 className="text-4xl sm:text-6xl font-bold luxury-font tracking-tight leading-tight">
+                   الجمال في <br/><span className="text-amber-500 italic">أبهى صوره</span>
                 </h2>
-                <p className="text-slate-400 text-lg font-light leading-relaxed">
+                <p className="text-slate-400 text-lg font-light">
                   ارفع صورتك الآن ودع ذكاء "نانو بنانو" الاصطناعي يتولى مهمة تحويلها لعمل فني فاخر.
                 </p>
                 <div className="flex gap-4 justify-center">
-                   <button onClick={() => fileInputRef.current?.click()} className="px-10 py-4 bg-white text-slate-950 rounded-full font-bold hover:bg-slate-200 transition-all shadow-xl">ابدأ الآن</button>
+                   <button onClick={() => fileInputRef.current?.click()} className="px-10 py-4 bg-white text-slate-950 rounded-full font-bold hover:bg-slate-200 transition-all shadow-xl">رفع صورة</button>
                    <button onClick={startCamera} className="px-10 py-4 border border-slate-700 rounded-full font-bold hover:border-amber-500 transition-all">التقاط صورة</button>
                 </div>
               </div>
             ) : (
-              <div className="w-full h-full flex flex-col gap-6 max-w-6xl mx-auto">
-                <div className="flex-1 flex flex-col lg:flex-row gap-8 min-h-0">
-                  <div className="flex-1 flex flex-col group">
-                    <div className="flex items-center justify-between mb-3 px-2">
-                       <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">الصورة الأصلية</span>
+              <div className="w-full h-full flex flex-col gap-6 max-w-7xl mx-auto">
+                <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0">
+                  <div className="flex-1 flex flex-col group relative">
+                    <div className="flex items-center justify-between mb-2 px-2">
+                       <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">الأصل</span>
                        <div className="flex gap-2">
-                         <button 
-                           onClick={cropToSquare}
-                           className="flex items-center gap-1 text-[10px] bg-amber-500/10 text-amber-500 font-bold px-3 py-1 rounded-full border border-amber-500/20 hover:bg-amber-500/20 transition-all"
-                         >
-                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                           قص مربع
-                         </button>
+                         <button onClick={cropToSquare} className="text-[10px] bg-amber-500/10 text-amber-500 px-3 py-1 rounded-full border border-amber-500/20">قص مربع</button>
                          <button onClick={() => setImageState({ original: null, edited: null, isProcessing: false, error: null })} className="text-[10px] text-red-400 font-bold hover:underline">حذف</button>
                        </div>
                     </div>
-                    <div className="flex-1 rounded-[40px] overflow-hidden border border-slate-800 bg-slate-900/30">
+                    <div className="flex-1 rounded-[32px] overflow-hidden border border-slate-800 bg-slate-900/30">
                       <img src={imageState.original} alt="Original" className="w-full h-full object-contain" />
                     </div>
                   </div>
 
-                  <div className="flex-1 flex flex-col">
-                    <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-3 px-2">إبداع نانو بنانو (4K)</span>
-                    <div className="flex-1 rounded-[40px] overflow-hidden border border-amber-500/20 bg-slate-900/50 shadow-2xl shadow-amber-500/5 relative">
+                  <div className="flex-1 flex flex-col relative">
+                    <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest mb-2 px-2">معالجة نانو بنانو</span>
+                    <div className="flex-1 rounded-[32px] overflow-hidden border border-amber-500/20 bg-slate-900/50 shadow-2xl relative">
                       {imageState.isProcessing && (
-                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-xl">
-                          <div className="w-24 h-24 border-4 border-amber-500/10 border-t-amber-500 rounded-full animate-spin" />
-                          <p className="text-amber-500 font-bold text-xl luxury-font mt-8 animate-pulse">Masterpiece in progress...</p>
+                        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm">
+                          <div className="w-16 h-16 border-4 border-amber-500/10 border-t-amber-500 rounded-full animate-spin" />
+                          <p className="text-amber-500 font-bold text-sm mt-4">جاري المعالجة...</p>
                         </div>
                       )}
                       {imageState.edited ? (
                         <img src={imageState.edited} alt="AI Result" className="w-full h-full object-contain animate-in fade-in zoom-in-95 duration-700" />
                       ) : (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-600 gap-4 opacity-40">
-                           <div className="w-20 h-20 border-2 border-dashed border-slate-700 rounded-full flex items-center justify-center text-3xl">🏛️</div>
-                           <p className="luxury-font italic text-sm">في انتظار لمستك الإبداعية من نانو بنانو...</p>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-700 gap-3">
+                           <p className="luxury-font italic text-xs italic">في انتظار لمستك الإبداعية...</p>
                         </div>
                       )}
                     </div>
@@ -455,14 +450,14 @@ const App: React.FC = () => {
                 </div>
 
                 {imageState.edited && (
-                  <div className="flex flex-wrap justify-center gap-4 py-4">
-                    <button onClick={downloadImage} className="px-10 py-4 gold-gradient text-slate-950 font-bold rounded-full shadow-2xl flex items-center gap-3 hover:scale-105 active:scale-95 transition-all">
-                      <span>حفظ النتيجة الفاخرة</span>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                  <div className="flex flex-wrap justify-center gap-4 py-4 animate-in slide-in-from-bottom-4 duration-500">
+                    <button onClick={downloadImage} className="px-8 py-3 gold-gradient text-slate-950 font-bold rounded-full shadow-lg flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
+                      <span>حفظ النتيجة</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     </button>
-                    <button onClick={shareToGallery} className="px-10 py-4 bg-slate-900 border border-slate-700 rounded-full font-bold hover:bg-slate-800 transition-all flex items-center gap-3">
-                      <span>مشاركة في المعرض</span>
-                      <span>📤</span>
+                    <button onClick={shareToGallery} className="px-8 py-3 bg-slate-900 border border-slate-700 rounded-full font-bold hover:bg-slate-800 transition-all flex items-center gap-2">
+                      <span>نشر في المعرض</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" /></svg>
                     </button>
                   </div>
                 )}
@@ -470,17 +465,17 @@ const App: React.FC = () => {
             )}
           </div>
 
-          <section className="bg-slate-900/30 border-t border-slate-800/50 p-12">
+          <section className="bg-slate-900/20 border-t border-slate-800/50 p-10">
             <div className="max-w-6xl mx-auto">
-              <h3 className="text-4xl font-bold luxury-font mb-8">معرض إبداعات نانو بنانو</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <h3 className="text-2xl font-bold luxury-font mb-8">معرض إبداعات "نانو بنانو"</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {gallery.map((item) => (
-                  <div key={item.id} className="group relative bg-slate-900 rounded-[32px] overflow-hidden border border-slate-800 hover:border-amber-500/30 transition-all duration-500 hover:-translate-y-2 shadow-xl">
+                  <div key={item.id} className="group relative bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 hover:border-amber-500/30 transition-all">
                     <img src={item.url} alt="Gallery" className="aspect-[3/4] w-full h-full object-cover" />
-                    <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-slate-950 to-transparent">
+                    <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-slate-950/80 to-transparent">
                       <div className="flex items-center justify-between">
-                         <span className="text-xs font-bold text-slate-100">{item.userName}</span>
-                         <button onClick={() => voteImage(item.id)} className="flex items-center gap-1 text-[10px] text-amber-500">
+                         <span className="text-[9px] font-bold text-slate-300">{item.userName}</span>
+                         <button onClick={() => voteImage(item.id)} className="flex items-center gap-1 text-[8px] text-amber-500">
                            <span>💎</span> {item.likes}
                          </button>
                       </div>
@@ -493,117 +488,49 @@ const App: React.FC = () => {
         </section>
       </main>
 
+      {/* Modals remain the same but styled consistently */}
       {showSettingsModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
-           <div className="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-[40px] p-10 shadow-2xl relative">
-              <button 
-                onClick={() => setShowSettingsModal(false)}
-                className="absolute top-8 left-8 text-slate-500 hover:text-white transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-300">
+           <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-[32px] p-8 shadow-2xl relative">
+              <button onClick={() => setShowSettingsModal(false)} className="absolute top-6 left-6 text-slate-500 hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
-
-              <div className="text-center mb-8">
-                 <div className="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-6">🔑</div>
-                 <h4 className="text-2xl font-bold luxury-font mb-2">إدارة مفتاح الوصول</h4>
-                 <p className="text-slate-500 text-sm">مطلوب للوصول إلى النماذج الاحترافية (Gemini 3 Pro)</p>
+              <div className="text-center mb-6">
+                 <h4 className="text-xl font-bold luxury-font mb-1">إدارة مفتاح الوصول</h4>
+                 <p className="text-slate-500 text-[10px]">مطلوب للوضع الاحترافي عالي الجودة</p>
               </div>
-
-              <div className="space-y-6">
-                 <div className="bg-slate-950/50 border border-slate-800 rounded-3xl p-6">
-                    <div className="flex items-center justify-between mb-4">
-                       <span className="text-sm font-bold">حالة المفتاح:</span>
-                       {hasApiKey ? (
-                          <span className="text-xs font-bold text-emerald-500 flex items-center gap-1">
-                             <span className="w-2 h-2 bg-emerald-500 rounded-full" /> متصل
-                          </span>
-                       ) : (
-                          <span className="text-xs font-bold text-amber-500 flex items-center gap-1">
-                             <span className="w-2 h-2 bg-amber-500 rounded-full" /> غير متصل
-                          </span>
-                       )}
-                    </div>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                       يتم التعامل مع مفاتيح API بشكل آمن عبر المنصة. يرجى اختيار مفتاح من مشروع GCP مدفوع لتفعيل الميزات الاحترافية.
-                    </p>
+              <div className="space-y-4">
+                 <div className="bg-slate-950/50 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
+                    <span className="text-xs">حالة المفتاح:</span>
+                    {hasApiKey ? <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">نشط ✅</span> : <span className="text-[10px] text-amber-500 font-bold uppercase tracking-widest">غير متصل ⚠️</span>}
                  </div>
-
-                 <div className="space-y-4">
-                    <button 
-                      onClick={handleManageKey} 
-                      className="w-full py-4 gold-gradient text-slate-950 font-bold rounded-2xl shadow-xl active:scale-[0.98] transition-all"
-                    >
-                       اختيار / تغيير مفتاح API
-                    </button>
-                    
-                    <a 
-                      href="https://ai.google.dev/gemini-api/docs/billing" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="block text-center text-[10px] text-amber-500 hover:underline uppercase tracking-widest font-bold"
-                    >
-                       التوثيق الخاص بالفوترة والرسوم
-                    </a>
-                 </div>
-
-                 <div className="pt-4 border-t border-slate-800">
-                    <p className="text-[10px] text-slate-500 text-center">
-                       الوضع السريع لا يتطلب إعدادات إضافية.
-                    </p>
-                 </div>
+                 <button onClick={handleManageKey} className="w-full py-3 gold-gradient text-slate-950 font-bold rounded-xl text-sm shadow-lg active:scale-95 transition-all">اختيار مفتاح من الاستوديو</button>
+                 <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noopener noreferrer" className="block text-center text-[9px] text-amber-500 hover:underline uppercase tracking-widest font-bold">معلومات الفوترة في جوجل</a>
               </div>
            </div>
         </div>
       )}
 
       {showUploadModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
-           <div id="uploadForm" className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-[40px] p-8 shadow-2xl">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-md animate-in fade-in duration-300">
+           <div className="w-full max-w-sm bg-slate-900 border border-slate-800 rounded-[32px] p-8 shadow-2xl">
               <div className="text-center mb-6">
-                 <h4 className="text-2xl font-bold luxury-font mb-2">مشاركة الإبداع</h4>
-                 <p className="text-slate-500 text-xs">معاينة الصورة والتحقق من اسم العرض قبل النشر</p>
+                 <h4 className="text-xl font-bold luxury-font mb-2">مشاركة الإبداع</h4>
               </div>
-              
-              <div className="space-y-6">
-                 {/* معاينة الصورة المرفوعة */}
-                 <div className="image-preview-container aspect-[3/4] w-32 mx-auto rounded-2xl overflow-hidden border-2 border-amber-500/30 shadow-lg shadow-amber-500/5 bg-slate-950">
-                    {sharePreview ? (
-                      <img src={sharePreview} alt="Selected for upload" className="w-full h-full object-cover animate-in zoom-in duration-300" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-700 text-xl">🖼️</div>
-                    )}
+              <div className="space-y-4">
+                 <div className="aspect-[3/4] w-32 mx-auto rounded-xl overflow-hidden border border-amber-500/30">
+                    <img src={sharePreview || imageState.edited || ''} alt="Upload" className="w-full h-full object-cover" />
                  </div>
-
-                 <div className="space-y-4">
-                   <div className="space-y-1">
-                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">تغيير صورة النشر (اختياري)</label>
-                     <input 
-                        type="file" 
-                        id="shareFileInput"
-                        onChange={handleShareFileChange}
-                        accept="image/*"
-                        className="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-500/10 file:text-amber-500 hover:file:bg-amber-500/20 cursor-pointer"
-                     />
-                   </div>
-
-                   <div className="space-y-1">
-                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1">اسم المبدع</label>
-                     <input 
-                        type="text" 
-                        id="userNameInput"
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
-                        placeholder="أدخل اسمك الفني هنا..."
-                        className="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-sm focus:outline-none transition-all"
-                     />
-                   </div>
-                 </div>
-
-                 <div className="flex gap-3 pt-2">
-                    <button onClick={confirmUpload} className="flex-1 py-4 gold-gradient text-slate-950 font-bold rounded-2xl shadow-lg active:scale-95 transition-all">نشر الآن</button>
-                    <button onClick={() => { setShowUploadModal(false); setSharePreview(null); }} className="px-6 py-4 bg-slate-800 text-slate-400 font-bold rounded-2xl hover:bg-slate-700 transition-all">إلغاء</button>
+                 <input 
+                    type="text" 
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    placeholder="اسمك الفني..."
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs outline-none focus:border-amber-500 transition-all"
+                 />
+                 <div className="flex gap-2">
+                    <button onClick={confirmUpload} className="flex-1 py-3 gold-gradient text-slate-950 font-bold rounded-xl text-xs active:scale-95 transition-all">نشر</button>
+                    <button onClick={() => setShowUploadModal(false)} className="px-4 py-3 bg-slate-800 text-slate-400 font-bold rounded-xl text-xs">إلغاء</button>
                  </div>
               </div>
            </div>
@@ -611,7 +538,7 @@ const App: React.FC = () => {
       )}
 
       <footer className="py-6 px-8 border-t border-slate-900 bg-slate-950 text-center">
-        <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">© {new Date().getFullYear()} نانو بنانو | الذكاء الاصطناعي للأزياء الراقية</p>
+        <p className="text-[9px] text-slate-700 font-bold uppercase tracking-[0.3em]">© {new Date().getFullYear()} نانو بنانو | محرك الجمال بالأقمار الصناعية</p>
       </footer>
     </div>
   );
