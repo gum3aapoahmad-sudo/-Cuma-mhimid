@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -8,50 +9,54 @@
     <script src="https://alistudio.ai/sdk/v1/studio.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --brand-primary: #8b5cf6; /* violet-500 */
+            --brand-secondary: #c084fc; /* violet-400 */
+        }
         body {
             font-family: 'Alexandria', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: #09090b; /* zinc-950 */
+            color: #fafafa;
         }
         .luxury-font {
             font-family: 'Playfair Display', serif;
         }
-        .gold-gradient {
-            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+        .brand-gradient {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
         }
         .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(18, 18, 21, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        /* أنيميشن مخصص للحدود عند التركيز */
+        /* Border Glow Effect */
         @keyframes border-glow {
-            0% { border-color: rgba(251, 191, 36, 0.3); box-shadow: 0 0 0 rgba(251, 191, 36, 0); }
-            50% { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
-            100% { border-color: rgba(251, 191, 36, 0.3); box-shadow: 0 0 0 rgba(251, 191, 36, 0); }
+            0% { border-color: rgba(139, 92, 246, 0.3); box-shadow: 0 0 0 rgba(139, 92, 246, 0); }
+            50% { border-color: #8b5cf6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.2); }
+            100% { border-color: rgba(139, 92, 246, 0.3); box-shadow: 0 0 0 rgba(139, 92, 246, 0); }
         }
 
-        #uploadForm input[type='text'] {
-            transition: all 0.3s ease;
-        }
-
-        #uploadForm input[type='text']:focus {
-            animation: border-glow 1.5s infinite ease-in-out;
+        input:focus, textarea:focus {
+            animation: border-glow 2s infinite ease-in-out;
             outline: none;
-            border-color: #fbbf24;
         }
 
-        /* تنسيق معاينة الصورة المختارة */
-        .image-preview-container {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: scale(0.98);
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-        .image-preview-container:hover {
-            transform: scale(1);
-            border-color: rgba(251, 191, 36, 0.5);
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
         }
     </style>
 <script type="importmap">
