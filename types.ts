@@ -6,7 +6,8 @@ export enum EditingMode {
 
 export interface ImageState {
   original: string | null;
-  edited: string | null;
+  history: string[]; // Stack of edited image versions
+  historyIndex: number; // Pointer to the current active version in history
   isProcessing: boolean;
   error: string | null;
 }
@@ -36,9 +37,9 @@ declare global {
   }
 
   interface Window {
-    // Removed 'readonly' modifier to fix: "All declarations of 'aistudio' must have identical modifiers".
-    // This property must match the modifier used in the environment's definition of Window.
-    aistudio: AIStudio;
+    // FIX: All declarations of 'aistudio' must have identical modifiers.
+    // Properties injected into the global Window object by the environment are typically readonly.
+    readonly aistudio: AIStudio;
   }
 }
 

@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { EditingMode, ImageState, GalleryItem } from './types';
 import { FASHION_PRESETS } from './constants';
 import { processImage } from './services/geminiService';
@@ -7,7 +7,8 @@ import { processImage } from './services/geminiService';
 const App: React.FC = () => {
   const [imageState, setImageState] = useState<ImageState>({
     original: null,
-    edited: null,
+    history: [],
+    historyIndex: -1,
     isProcessing: false,
     error: null,
   });
@@ -59,14 +60,51 @@ const App: React.FC = () => {
     setGallery(initialItems);
   }, []);
 
+  const undo = useCallback(() => {
+    setImageState(prev => {
+      if (prev.historyIndex > 0) {
+        return { ...prev, historyIndex: prev.historyIndex - 1 };
+      }
+      return prev;
+    });
+  }, []);
+
+  const redo = useCallback(() => {
+    setImageState(prev => {
+      if (prev.historyIndex < prev.history.length - 1) {
+        return { ...prev, historyIndex: prev.historyIndex + 1 };
+      }
+      return prev;
+    });
+  }, []);
+
+  // Keyboard shortcuts for Undo/Redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+        if (e.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+        redo();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo]);
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
+        const base64 = event.target?.result as string;
         setImageState({
-          original: event.target?.result as string,
-          edited: null,
+          original: base64,
+          history: [base64],
+          historyIndex: 0,
           isProcessing: false,
           error: null
         });
@@ -77,15 +115,26 @@ const App: React.FC = () => {
   };
 
   const handleProcess = async () => {
-    if (!imageState.original) return;
+    const currentImage = imageState.history[imageState.historyIndex];
+    if (!currentImage) return;
     setImageState(prev => ({ ...prev, isProcessing: true, error: null }));
 
     const activePreset = FASHION_PRESETS.find(p => p.id === selectedPresetId);
     const finalPrompt = customPrompt.trim() || activePreset?.prompt || FASHION_PRESETS[0].prompt;
 
     try {
-      const result = await processImage(imageState.original, finalPrompt, mode);
-      setImageState(prev => ({ ...prev, edited: result, isProcessing: false }));
+      const result = await processImage(currentImage, finalPrompt, mode);
+      setImageState(prev => {
+        // If we are performing a new edit while historyIndex is not at the end, 
+        // we remove the "future" history (Redo steps).
+        const newHistory = prev.history.slice(0, prev.historyIndex + 1);
+        return {
+          ...prev,
+          history: [...newHistory, result],
+          historyIndex: newHistory.length,
+          isProcessing: false
+        };
+      });
     } catch (err: any) {
       if (err.message === "AUTH_REQUIRED") {
         setShowSettingsModal(true);
@@ -114,7 +163,14 @@ const App: React.FC = () => {
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
       canvas.getContext('2d')?.drawImage(video, 0, 0);
-      setImageState({ original: canvas.toDataURL('image/png'), edited: null, isProcessing: false, error: null });
+      const base64 = canvas.toDataURL('image/png');
+      setImageState({ 
+        original: base64, 
+        history: [base64], 
+        historyIndex: 0, 
+        isProcessing: false, 
+        error: null 
+      });
       stopCamera();
     }
   };
@@ -123,6 +179,8 @@ const App: React.FC = () => {
     streamRef.current?.getTracks().forEach(t => t.stop());
     setShowCamera(false);
   };
+
+  const currentEditedImage = imageState.history[imageState.historyIndex];
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 overflow-hidden selection:bg-violet-500/30">
@@ -275,7 +333,7 @@ const App: React.FC = () => {
                   <div className="flex flex-col gap-3 group">
                     <div className="flex justify-between items-center px-2">
                       <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest">الأصل</span>
-                      <button onClick={() => setImageState({original: null, edited: null, isProcessing: false, error: null})} className="text-xs text-zinc-600 hover:text-red-400 transition-colors">إلغاء الصورة</button>
+                      <button onClick={() => setImageState({original: null, history: [], historyIndex: -1, isProcessing: false, error: null})} className="text-xs text-zinc-600 hover:text-red-400 transition-colors">إلغاء الصورة</button>
                     </div>
                     <div className="flex-1 rounded-[2rem] overflow-hidden border border-zinc-800 bg-zinc-900/20 shadow-inner group-hover:border-zinc-700 transition-all">
                       <img src={imageState.original} alt="Original" className="w-full h-full object-contain" />
@@ -285,15 +343,35 @@ const App: React.FC = () => {
                   {/* After */}
                   <div className="flex flex-col gap-3 group">
                     <div className="flex justify-between items-center px-2">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <span className="text-[11px] font-bold text-violet-400 uppercase tracking-widest">إبداع النسيم</span>
                         {mode === EditingMode.PROFESSIONAL && <span className="text-[9px] bg-violet-500 text-white px-2 py-0.5 rounded-full font-bold">4K PRO</span>}
+                        
+                        {/* Undo / Redo Buttons */}
+                        <div className="flex items-center gap-1 ml-2 border-l border-zinc-800 pl-3">
+                          <button 
+                            onClick={undo}
+                            disabled={imageState.historyIndex <= 0 || imageState.isProcessing}
+                            title="Undo (Ctrl+Z)"
+                            className="p-1.5 rounded-lg text-zinc-400 hover:bg-zinc-900 hover:text-white disabled:opacity-20 transition-all"
+                          >
+                            <span className="text-sm">↺</span>
+                          </button>
+                          <button 
+                            onClick={redo}
+                            disabled={imageState.historyIndex >= imageState.history.length - 1 || imageState.isProcessing}
+                            title="Redo (Ctrl+Shift+Z)"
+                            className="p-1.5 rounded-lg text-zinc-400 hover:bg-zinc-900 hover:text-white disabled:opacity-20 transition-all"
+                          >
+                            <span className="text-sm">↻</span>
+                          </button>
+                        </div>
                       </div>
-                      {imageState.edited && (
+                      {currentEditedImage && (
                         <div className="flex gap-4">
                            <button onClick={() => {
                              const link = document.createElement('a');
-                             link.href = imageState.edited!;
+                             link.href = currentEditedImage!;
                              link.download = "al-naseem-fashion-result.png";
                              link.click();
                            }} className="text-xs text-white bg-zinc-900 px-3 py-1 rounded-full border border-zinc-800 hover:bg-zinc-800 transition-all flex items-center gap-1">تحميل <span>⬇️</span></button>
@@ -311,8 +389,8 @@ const App: React.FC = () => {
                           </div>
                         </div>
                       )}
-                      {imageState.edited ? (
-                        <img src={imageState.edited} alt="Result" className="w-full h-full object-contain animate-in fade-in zoom-in-95 duration-1000" />
+                      {currentEditedImage ? (
+                        <img src={currentEditedImage} alt="Result" className="w-full h-full object-contain animate-in fade-in zoom-in-95 duration-1000" />
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center text-zinc-800 text-sm italic p-16 text-center space-y-4">
                           <div className="w-16 h-16 border-2 border-dashed border-zinc-800 rounded-full flex items-center justify-center text-2xl">✨</div>
@@ -402,7 +480,7 @@ const App: React.FC = () => {
           <div className="w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-[2.5rem] p-10 shadow-2xl text-center">
             <h4 className="text-xl font-bold mb-6 luxury-font">مشاركة في مجتمع النسيم</h4>
             <div className="aspect-[3/4] w-36 mx-auto rounded-2xl overflow-hidden mb-8 border border-zinc-800 shadow-2xl transform hover:scale-105 transition-transform">
-              <img src={imageState.edited || ''} className="w-full h-full object-cover" />
+              <img src={currentEditedImage || ''} className="w-full h-full object-cover" />
             </div>
             <div className="space-y-4">
               <input 
@@ -415,7 +493,7 @@ const App: React.FC = () => {
               <div className="flex gap-3 pt-2">
                 <button 
                   onClick={() => {
-                    setGallery([{id: Date.now().toString(), url: imageState.edited!, userName: userName || 'مبدع مجهول', date: 'الآن', likes: 0}, ...gallery]);
+                    setGallery([{id: Date.now().toString(), url: currentEditedImage!, userName: userName || 'مبدع مجهول', date: 'الآن', likes: 0}, ...gallery]);
                     setShowUploadModal(false);
                   }}
                   className="flex-1 py-4 brand-gradient text-white font-bold rounded-xl text-xs shadow-lg shadow-violet-500/20"
