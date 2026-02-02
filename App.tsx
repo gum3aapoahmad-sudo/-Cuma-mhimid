@@ -1,5 +1,6 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { EditingMode, ImageState, GalleryItem } from './types';
 import { FASHION_PRESETS } from './constants';
 import { processImage } from './services/geminiService';
@@ -527,6 +528,7 @@ const App: React.FC = () => {
           </div>
         </div>
       )}
+      <SpeedInsights />
     </div>
   );
 };
